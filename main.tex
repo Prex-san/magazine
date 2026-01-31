@@ -1,0 +1,434 @@
+\documentclass[11pt]{article}
+
+% ---------- Encoding / typography ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\setstretch{1.05}
+\usepackage{ragged2e} % \justifying
+
+% ---------- Page ----------
+\usepackage[a4paper,margin=18mm,includeheadfoot]{geometry}
+
+% ---------- Graphics / layout ----------
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{grffile} % allows spaces in filenames like "aids (1).jpeg"
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{eso-pic}
+\usepackage{needspace}
+\usepackage{xparse} % IMPORTANT: enables >9 args + +m
+
+% ---------- Header/footer ----------
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\footrulewidth}{0pt}
+
+% ---------- Theme ----------
+\definecolor{bg}{HTML}{F7FAF9}
+\definecolor{side}{HTML}{0F5B5B}
+\definecolor{accent}{HTML}{E9C46A}
+\definecolor{textDark}{HTML}{1A1A1A}
+
+% ---------- Layout sizes ----------
+\newlength{\SideW}
+\setlength{\SideW}{42mm}
+
+\newlength{\SideInset}
+\setlength{\SideInset}{1.5mm}
+
+\newlength{\TagW}
+\setlength{\TagW}{\dimexpr\SideW-2\SideInset\relax}
+
+% Sidebar starts below header area
+\newlength{\HeaderDrop}
+\setlength{\HeaderDrop}{\dimexpr\headheight+\headsep+2mm\relax}
+
+% Fancy breathing space between sidebar and header start
+\newlength{\HeaderGap}
+\setlength{\HeaderGap}{6mm}
+
+% Header starts after sidebar + gap
+\fancyhead[L]{\hspace*{\dimexpr\SideW+\HeaderGap\relax}\small\textsf{\bfseries Krish Chronicles}}
+\fancyhead[R]{\small\textsf{\thepage}}
+
+% Header rule starts after sidebar + gap
+\renewcommand{\headrule}{%
+  \hbox to\headwidth{%
+    \hspace*{\dimexpr\SideW+\HeaderGap\relax}%
+    \leaders\hrule height \headrulewidth\hfill
+  }%
+}
+
+% ---------- Footer (line + quote) ----------
+\newcommand{\PageQuote}{}
+\newcommand{\setpagequote}[1]{\renewcommand{\PageQuote}{#1}}
+
+\newcommand{\FooterLine}{%
+  \hspace*{\dimexpr\SideW+\HeaderGap\relax}%
+  {\color{side!35}\rule{\dimexpr\headwidth-\SideW-\HeaderGap\relax}{0.4pt}}%
+}
+
+\fancyfoot[C]{%
+  \vspace*{2mm}\FooterLine\par
+  \vspace*{1.5mm}%
+  \hspace*{\dimexpr\SideW+\HeaderGap\relax}%
+  {\sffamily\itshape\scriptsize\color{side!78!black}\PageQuote}%
+}
+
+% ---------- Page background ----------
+\newcommand{\PageBackground}{%
+  \AddToShipoutPictureBG*{%
+    \begin{tikzpicture}[remember picture, overlay]
+      \fill[bg] (current page.south west) rectangle (current page.north east);
+      \fill[side!10] ($(current page.north west)+(0,-\HeaderDrop)$) rectangle (current page.north east);
+    \end{tikzpicture}
+  }%
+}
+
+% ---------- Tag pill (width-safe) ----------
+\newcommand{\tagpill}[1]{%
+  {\setlength{\fboxsep}{2.2pt}%
+   \setlength{\fboxrule}{0.4pt}%
+   \fcolorbox{accent!80!black}{accent!22}{%
+     \parbox{\dimexpr\TagW-2\fboxsep-2\fboxrule\relax}{%
+       \sffamily\bfseries\scriptsize\color{side!95!black} #1%
+     }%
+   }%
+  }%
+}
+\newcommand{\maybetag}[1]{%
+  \if\relax\detokenize{#1}\relax\else
+    \tagpill{#1}\par\vspace{3mm}%
+  \fi
+}
+\newcommand{\eventtags}[3]{%
+  \maybetag{#1}%
+  \maybetag{#2}%
+  \maybetag{#3}%
+}
+
+% ---------- Photo helpers (CENTERED + rounded corners everywhere) ----------
+\newcommand{\centeredgraphic}[2]{%
+  \makebox[\linewidth][c]{\includegraphics[height=#2,keepaspectratio]{#1}}%
+}
+
+\newcommand{\photobox}[2]{%
+  \begin{tikzpicture}[baseline, outer sep=0pt]
+    \node[inner sep=0pt, outer sep=0pt, rounded corners=4pt, clip, anchor=north] at (0,0) {%
+      \begin{minipage}{\linewidth}
+        \centering
+        \centeredgraphic{#1}{#2}%
+      \end{minipage}
+    };
+  \end{tikzpicture}%
+}
+
+\setlength{\tabcolsep}{6pt}
+
+% Full-page photo sets
+\newcommand{\onephoto}[1]{\noindent\photobox{#1}{78mm}}
+\newcommand{\twophotos}[2]{%
+  \noindent\begin{tabularx}{\linewidth}{@{}XX@{}}
+    \photobox{#1}{52mm} & \photobox{#2}{52mm} \\
+  \end{tabularx}
+}
+\newcommand{\fourphotos}[4]{%
+  \noindent\begin{tabularx}{\linewidth}{@{}XX@{}}
+    \photobox{#1}{50mm} & \photobox{#2}{50mm} \\
+    \photobox{#3}{50mm} & \photobox{#4}{50mm} \\
+  \end{tabularx}
+}
+\newcommand{\nophotos}{} % no prompt text
+
+% Compact photo sets (for 2-events-per-page)
+\newcommand{\onephotocompact}[1]{\noindent\photobox{#1}{52mm}}
+\newcommand{\twophotoscompact}[2]{%
+  \noindent\begin{tabularx}{\linewidth}{@{}XX@{}}
+    \photobox{#1}{40mm} & \photobox{#2}{40mm} \\
+  \end{tabularx}
+}
+
+% ---------- Event block (ONE EVENT PER PAGE) ----------
+\newcommand{\eventblock}[6]{%
+  \clearpage
+  \PageBackground
+  \vspace{2mm}
+  \noindent
+  \begin{tabularx}{\textwidth}{@{}>{\columncolor{side}}p{\SideW}X@{}}
+    \begin{minipage}[t]{\SideW}
+      \vspace*{6mm}
+      \hspace*{\SideInset}%
+      \begin{minipage}[t]{\TagW}
+        \RaggedRight\sloppy\emergencystretch=2em
+        \parbox{\linewidth}{\color{white}\sffamily\bfseries\fontsize{14}{16}\selectfont #1}\par
+        \vspace{5mm}
+        \parbox{\linewidth}{\color{white}\sffamily\bfseries #2}\par
+        \vspace{6mm}
+        #5
+        \vspace{2mm}
+      \end{minipage}
+    \end{minipage}
+    &
+    \begin{minipage}[t]{\dimexpr\textwidth-\SideW\relax}
+      \vspace*{8mm}
+      {\sffamily\bfseries\LARGE\color{textDark} #3\par}
+      \vspace{4mm}
+      \noindent\color{side!70!black}\rule{\linewidth}{0.6pt}
+      \vspace{5mm}
+      \justifying{\color{textDark} #4\par}
+      \vspace{7mm}
+      #6
+      \vfill
+    \end{minipage}
+  \end{tabularx}
+}
+
+% ---------- Event block (INLINE, COMPACT) ----------
+% IMPORTANT: +m for body so it can include blank lines / paragraphs safely.
+\NewDocumentCommand{\eventinline}{m m m +m m m}{%
+  \noindent
+  \begin{tabularx}{\textwidth}{@{}>{\columncolor{side}}p{\SideW}X@{}}
+    \begin{minipage}[t]{\SideW}
+      \vspace*{4mm}
+      \hspace*{\SideInset}%
+      \begin{minipage}[t]{\TagW}
+        \RaggedRight\sloppy\emergencystretch=3em
+        \parbox{\linewidth}{\color{white}\sffamily\bfseries\fontsize{12}{14}\selectfont #1}\par
+        \vspace{3mm}
+        \parbox{\linewidth}{\color{white}\sffamily\bfseries\small #2}\par
+        \vspace{4mm}
+        {\scriptsize #5}%
+      \end{minipage}
+    \end{minipage}
+    &
+    \begin{minipage}[t]{\dimexpr\textwidth-\SideW\relax}
+      \vspace*{6mm}
+      {\sffamily\bfseries\Large\color{textDark} #3\par}
+      \vspace{3mm}
+      \noindent\color{side!60!black}\rule{\linewidth}{0.5pt}
+      \vspace{4mm}
+      \sloppy\emergencystretch=3em
+      \justifying{\color{textDark}\small #4\par}
+      \vspace{5mm}
+      #6
+    \end{minipage}
+  \end{tabularx}
+}
+
+% ---------- Two events per page ----------
+% IMPORTANT: +m for BOTH bodies (#4 and #10). This fixes your error.
+\NewDocumentCommand{\eventpair}{m m m +m m m  m m m +m m m}{%
+  \clearpage
+  \PageBackground
+  \vspace{2mm}
+
+  % Event A
+  \eventinline{#1}{#2}{#3}{#4}{#5}{#6}
+
+  \vspace{7mm}
+  \noindent\hspace*{\SideW}\color{side!25}\rule{\dimexpr\textwidth-\SideW\relax}{0.4pt}
+  \vspace{7mm}
+
+  % Event B
+  \eventinline{#7}{#8}{#9}{#10}{#11}{#12}
+
+  \vfill
+}
+
+% ---------- Posters grid for invitations (NO BORDERS + rounded via photobox) ----------
+\newcommand{\posterplain}[1]{\photobox{#1}{78mm}}
+\newcommand{\postersfour}[4]{%
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}XX@{}}
+    \posterplain{#1} & \posterplain{#2} \\
+    \posterplain{#3} & \posterplain{#4} \\
+  \end{tabularx}
+}
+
+\begin{document}
+\PageBackground
+
+% ---------- Cover ----------
+\thispagestyle{empty}
+\setpagequote{Education is the journey from light to enlightenment.}
+\vspace*{10mm}
+\begin{center}
+  {\sffamily\bfseries\Huge Krish Chronicles\par}
+  \vspace{3mm}
+  {\sffamily\bfseries\Large 2025--26\par}
+  \vspace{10mm}
+  \includegraphics[width=0.9\textwidth,keepaspectratio]{op_page.jpeg}
+\end{center}
+\clearpage
+
+% ---------- Events ----------
+% 4-image events = single page
+% 2-image/1-image events = two per page
+% NO third images referenced anywhere
+
+\setpagequote{Education creates awareness; awareness saves lives.}
+\eventblock
+  {5 KM\\Red Run\\Competition}
+  {18 July 2025}
+  {5 KM Red Run Competition}
+  {As per the guidelines of PACS, the RRC of Krishnasamy College of Education for Women, Puducherry conducted the Red Run Competition on 18th July 2025 to raise awareness regarding HIV/AIDS. The run started from the neighbourhood village Varkalodai covering Manapattu area and reached back to our college. 10 student-teachers were selected and awarded prizes as a token of appreciation. These selected students were sent to District level Red Run competition. Staff members from Godrej Consumers Product Ltd., Puducherry participated in the AIDS awareness programme. Mrs. M. Jeevitha, Associate-Production flagged off the red run competition. All the faculty members motivated and encouraged}
+  {\eventtags{HIV/AIDS Awareness}{Community Outreach}{Red Run}}
+  {\fourphotos{rrc1.jpeg}{rrc2.jpeg}{rrc3.jpeg}{rrc4.jpeg}}
+
+\setpagequote{Debate sharpens the mind and strengthens democracy.}
+\eventblock
+  {Viksith Bharat\\Yuva Connect\\Programme}
+  {25.07.2025}
+  {Debate Competition}
+  {A debate competition was conducted under the Viksith Bharat Yuva Connect Programme on the theme: ``The use of military force during emergencies is a necessary measure or a threat to civil liberties,'' in response to the Pakistan-related event. Student-teachers participated actively and expressed their views with clarity and confidence.}
+  {\eventtags{Debate}{Civic Awareness}{Viksit Bharat}}
+  {\fourphotos{debate (1).jpeg}{debate (2).jpeg}{debate (3).jpeg}{debate (4).jpeg}}
+
+\setpagequote{Healthy students are the foundation of a healthy society.}
+\eventblock
+  {District Level\\Red Run\\(5 KM)}
+  {30.07.2025}
+  {District Level Red Run Competition (5 KM)}
+  {Ten student-teachers of Krishnasamy College of Education for Women participated in the District Level Red Run Competition held at Gandhi Statue, Beach Road, Puducherry. The event aimed at creating awareness on HIV/AIDS and promoting a healthy lifestyle. The enthusiastic participation of students reflected their commitment to social responsibility.}
+  {\eventtags{HIV/AIDS Awareness}{District Level}{Fitness Drive}}
+  {\fourphotos{run (1).jpeg}{run (2).jpeg}{run (3).jpeg}{run (4).jpeg}}
+
+\setpagequote{Green minds create a sustainable future.}
+\eventblock
+  {Tree\\Plantation\\Drive}
+  {01.08.2025}
+  {Tree Plantation Drive -- ``Ek Ped Maa Ke Naam''}
+  {Krishnasamy College of Education for Women, Puducherry, in collaboration with Marabumaamani Thiyagi Haaji M. Abdul Majeed Arakkattalai, organized a Plantation Drive on 06.08.2025 under the Viksit Bharat Yuva Connect Programme with the theme ``Ek Ped Maa Ke Naam.'' The programme was conducted under the guidance of the Principal, Dr. G. Manjula. As part of the initiative, 30 medicinal plants and saplings were planted in the college campus with active participation of staff and student-teachers, creating awareness on environmental conservation and social responsibility.}
+  {\eventtags{Environment}{Green Campus}{Viksit Bharat}}
+  {\fourphotos{tree (1).jpeg}{tree (2).jpeg}{tree (3).jpeg}{tree (4).jpeg}}
+
+% Pair page: Independence (1) + Orientation (2)  -- this has a blank line, now safe.
+\setpagequote{True independence begins with enlightened minds.}
+\eventpair
+  {79th\\Independence\\Day}{14 \& 15 August 2025}{79th Independence Day Celebration}
+  {Krishnasamy College of Education for Women, Puducherry celebrated the 79th Independence Day on 14th and 15th August 2025 with great patriotism and enthusiasm on the college premises. The celebration was coordinated by Mrs. V. Vasantha. The National Flag was hoisted by Dr. Jeyaseelan, Director, St. Antony's Matriculation Higher Secondary School, Cuddalore. The programme was presided over by Dr. K. Rajendran, Chairman, Krishnasamy College of Education for Women. The Principal, staff members, and students actively participated in the celebration.
+
+On 16 August 2025, Puducherry Liberation Day was commemorated with pride and reverence. The National Flag was hoisted by Principal Dr.V. Thilagavathy to honour the freedom struggle and the martyrs of Puducherry. Patriotic songs and speeches highlighted the significance of liberation from colonial rule. The programme concluded with a spirit of unity and patriotism.}
+  {\eventtags{Patriotism}{Flag Hoisting}{National Celebration}}
+  {\onephotocompact{independence (1).jpeg}}
+  {Inaugural\\\& Orientation\\Programme}{August 2025}{Inaugural and Orientation Programme}
+  {The Inaugural and Orientation Programme for the New Batch 2025--2026 was organized at Krishnasamy College of Education for Women during August 2025. The programme was inaugurated by Dr. Kannan in the presence of the Principal, and coordinated by Dr. M. Manjula, Programme Coordinator. Various chief guests, including Mrs. D. Venmathi, Mrs. K. Santhanalakshmi, Dr. K. Balamurugan, Mrs. M. Anandhi, Dr. K. Anandalakshmi, Mrs. M. Sujatha, Dr. B. Pavithra, Mrs. Anila Sunny Roy, and Dr. K. Geetha, delivered enlightening talks on various topics such as the importance of English, role of teachers and students, competitive examinations, success strategies, mental health, programming, mentoring, and national building. The programme provided valuable guidance and motivation to the newly admitted student-teachers.}
+  {\eventtags{Student Induction}{Guidance}{B.Ed. Programme}}
+  {\twophotoscompact{orientation (1).jpeg}{orientation (2).jpeg}}
+
+% Invitations (no borders)
+\setpagequote{Education is not preparation for life; it is life itself.}
+\eventblock
+  {Orientation\\Invitations}
+  {2025--2026}
+  {Invitation Posters (I)}
+  {Invitation posters prepared for the Inaugural and Orientation Programme.}
+  {\eventtags{Invitations}{Orientation}{Posters}}
+  {\postersfour{oe (1).jpeg}{oe (2).jpeg}{oe (3).jpeg}{oe (4).jpeg}}
+
+\setpagequote{The first step in learning is confidence.}
+\eventblock
+  {Orientation\\Invitations}
+  {2025--2026}
+  {Invitation Posters (II)}
+  {Invitation posters prepared for the Inaugural and Orientation Programme.}
+  {\eventtags{Invitations}{Orientation}{Posters}}
+  {\postersfour{oe (5).jpeg}{oe (6).jpeg}{oe (7).jpeg}{oe (8).jpeg}}
+
+\setpagequote{A good teacher plants seeds of lifelong learning.}
+\eventblock
+  {Orientation\\Invitations}
+  {2025--2026}
+  {Invitation Posters (III)}
+  {Invitation posters prepared for the Inaugural and Orientation Programme 2025--2026 and the Teachers day Programme.}
+  {\eventtags{Invitations}{Posters}{Design}}
+  {\postersfour{oe (9).jpeg}{te (1).jpeg}{te (2).jpeg}{te (3).jpeg}}
+
+% Pair page: Teachers' Day (1) + Suicide (1)
+\setpagequote{Teachers shape minds that shape the nation.}
+\eventpair
+  {Teachers'\\Day}{04.09.2025}{Teachers' Day Celebration}
+  {Teachers' Day was celebrated with great enthusiasm to honour and appreciate the invaluable contributions of teachers. The programme included cultural events, competitions, and academic activities that highlighted the role of teachers in shaping students' knowledge and character. A debate and quiz were organised focusing on teaching, learning, and the impact of technology in education. Faculty members and students actively participated, making the celebration meaningful and vibrant. The event fostered respect, gratitude, and a strong teacher--student bond.}
+  {\eventtags{Teacher Appreciation}{Cultural Events}{Student Engagement}}
+  {\onephotocompact{teachers_day (1).jpeg}}
+  {Suicide\\Prevention\\Awareness}{10.09.2025}{Suicide Prevention Awareness Programme}
+  {The Suicide Prevention Awareness Programme was conducted on 10.09.2025 to sensitize student-teachers on mental health and emotional well-being. The programme was organized under the guidance of the Programme In-charge, Dr. G. RajKavitha. The Principal addressed the gathering and all the staff members,students actively participated.}
+  {\eventtags{Mental Health}{Awareness}{Well-being}}
+  {\onephotocompact{suicide (1).jpeg}}
+
+% Election (4 images)
+\setpagequote{Education nurtures leadership and democratic values.}
+\eventblock
+  {Student\\Council\\Election}
+  {13 September 2025}
+  {Student Council Election}
+  {The Student Council Election was conducted on 13 September 2025. The programme was organized under the guidance of Dr. V. Thilagavathy, Principal. Dr. M. Manjula, Associate Professor, served as the overall in-charge of the ev ent. Faculty members coordinated the election smoothly, ensuring active student participation.}
+  {\eventtags{Student Leadership}{Democracy}{Campus Governance}}
+  {\fourphotos{election (1).jpeg}{election (2).jpeg}{election (3).jpeg}{election (4).jpeg}}
+
+% Pair page: Ayurveda (2) + Vigilance (2)
+\setpagequote{Education builds integrity and ethical citizenship.}
+\eventpair
+  {Ayurveda\\Day}{13.10.2025}{Ayurveda Day Celebration}
+  {Krishnasamy College of Education for Women, Puducherry celebrated the 10th Ayurveda Day on 13 October 2025 at the Multi-Purpose Hall. The programme was organized on the theme ``Ayurveda for People and Planet.'' Dr. R. Sivatharani, BSMS, PGDCR, Sri Dhavamani Siddha Clinic, Cuddalore, was the Chief Guest and addressed the gathering. The programme was coordinated by Dr. M. Parimala and Mrs. N. Lakshmi under the guidance of the Principal. Faculty members and student-teachers actively participated, making the programme informative and meaningful.}
+  {\eventtags{Traditional Medicine}{Health Awareness}{People \& Planet}}
+  {\twophotoscompact{ayur (1).jpeg}{ayur (2).jpeg}}
+  {Vigilance\\Awareness\\Week}{31.10.2025}{Vigilance Awareness Week}
+  {Vigilance Awareness Week activities on integrity and transparency were conducted on 31.10.2025. Student-teachers participated actively and the programme highlighted the importance of ethical values and responsible citizenship.}
+  {\eventtags{Integrity}{Transparency}{Awareness}}
+  {\twophotoscompact{vigil (1).jpeg}{vigil (2).jpeg}}
+
+% Pair page: Tobacco (2 only) + Community Camp (2 only)
+\setpagequote{Education empowers youth to choose health over habits.}
+\eventpair
+  {Tobacco-Free\\Youth\\Campaign}{03.11.2025}{Tobacco-Free Youth Campaign}
+  {The Tobacco-Free Youth Campaign was conducted on 03.11.2025 to create awareness about the harmful effects of tobacco and to encourage healthy lifestyle choices among student-teachers.}
+  {\eventtags{Health Awareness}{Youth Campaign}{Tobacco-Free}}
+  {\twophotoscompact{tobacco (1).jpeg}{tobacco (2).jpeg}}
+  {Community\\Living\\Camp}{07.11.2025}{Community Living Camp}
+  {Community living Camp held on 7.11.2025 students actively participated and visited places during the camp. Places - planetarium, blind school, satya school,}
+  {\eventtags{Experiential Learning}{Community Service}{Educational Visits}}
+  {\twophotoscompact{cc (1).jpeg}{cc (2).jpeg}}
+
+% Pair page: NED (1) + Navarathri (2)
+\setpagequote{Learning extends beyond classrooms into communities.}
+\eventpair
+  {National\\Education\\Day}{11 November 2025}{National Education Day}
+  {National Education Day was observed on 11 November with the conduct of a Quiz Competition at the institution. The programme aimed to commemorate the birth anniversary of Maulana Abul Kalam Azad and to create awareness about the importance of education among students. Active participation of students made the quiz session informative and engaging. The programme concluded successfully, reinforcing the value of knowledge and learning.}
+  {\eventtags{Quiz Competition}{Education Day}{Student Engagement}}
+  {\onephotocompact{ned.jpeg}}
+  {Navarathri\\Celebrations}{25 to 29 September 2025}{Navarathri Celebrations}
+  {Krishnasamy College of Education for Women, Puducherry celebrated Navarathri from 25 September to 29 September 2025 in a vibrant and devotional atmosphere on the college campus. Under the guidance of the College Principal, the celebrations included Navapathri Celebration, Navarathri Golu, cultural programmes, devotional songs, and Navarathri Gala held on 27 September 2025 and 29 September 2025. The Principal, staff members, and students actively participated.}
+  {\eventtags{Cultural Heritage}{Devotion}{Campus Fest}}
+  {\twophotoscompact{navaratri (1).jpeg}{navaratri (2).jpeg}}
+
+% Pair page: AIDS (2) + Constitution (1)
+\setpagequote{Education helps us understand our rights and duties.}
+\eventpair
+  {AIDS\\Awareness\\Day}{01.12.2025}{Aids Awareness Day}
+  {Aids Awareness Day was observed on 01.12.2025 to create awareness on HIV/AIDS and to encourage informed and responsible health practices among student-teachers.}
+  {\eventtags{HIV/AIDS Awareness}{Health Education}{Awareness Day}}
+  {\twophotoscompact{aids (1).jpeg}{aids (2).jpeg}}
+  {Constitution\\Day}{26 November 2025}{Constitution Day Celebration}
+  {Krishnasamy College of Education for Women, Puducherry observed Constitution Day on 26 November 2025 to commemorate the adoption of the Indian Constitution and to reaffirm the core values of justice, liberty, equality, and fraternity. Under the guidance of the College Principal, the programme featured the reading of the Preamble of the Constitution. The programme was coordinated by Mr. S. Deenadayalan.}
+  {\eventtags{Civic Values}{Preamble Reading}{Constitution Day}}
+  {\onephotocompact{constitution.jpeg}}
+
+% Christmas (1) single page
+\setpagequote{Education spreads hope, unity, and goodwill.}
+\eventblock
+  {Christmas\\\& New Year\\Celebration}
+  {23 December 2025}
+  {Christmas \& New Year Celebration}
+  {Krishnasamy College of Education for Women, Puducherry celebrated Christmas and New Year on 23 December 2025 in a joyful and festive atmosphere on the college campus. The celebration included cultural programmes, carol singing, and messages highlighting the values of love, unity, and hope. The Principal, faculty members, and student-teachers participated}
+  {\eventtags{Festive Celebration}{Cultural Programmes}{Unity \& Hope}}
+  {\onephoto{celeb.jpeg}}
+
+\end{document}
