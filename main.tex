@@ -21,6 +21,7 @@
 \usetikzlibrary{calc}
 \usepackage{eso-pic}
 \usepackage{needspace}
+\usepackage{xparse}
 
 % ---------- Header/footer ----------
 \usepackage{fancyhdr}
@@ -201,10 +202,24 @@
   \end{tabularx}
 }
 
-% ---------- Event block (TWO EVENTS PER PAGE) ----------
+% ---------- Event inline (COMPACT, no clearpage) ----------
+% #1 Title
+% #2 Body
+% #3 Photos block: \onephotocompact / \twophotoscompact / \nophotos
+\newcommand{\eventinline}[3]{%
+  {\sffamily\bfseries\Large\color{textDark} #1\par}
+  \vspace{3mm}
+  \noindent\color{side!60!black}\rule{\linewidth}{0.5pt}
+  \vspace{4mm}
+  \justifying{\color{textDark} #2\par}
+  \vspace{5mm}
+  #3
+}
+
+% ---------- Event pair (TWO EVENTS PER PAGE) ----------
 % Each event is the same structure but smaller images; used only for (2 images + 1 image) or (1 image + 1 image).
 % #1..#6 = event A, #7..#12 = event B
-\newcommand{\eventblocktwo}[12]{%
+\NewDocumentCommand{\eventpair}{m m m m m m m m m m m m}{%
   \clearpage
   \PageBackground
   \vspace{2mm}
@@ -224,32 +239,16 @@
       \end{minipage}
     \end{minipage}
     &
-    % ----- Main content (Event A) -----
+    % ----- Main content (Event A + Event B) -----
     \begin{minipage}[t]{\dimexpr\textwidth-\SideW\relax}
       \vspace*{7mm}
-      {\sffamily\bfseries\Large\color{textDark} #3\par}
-      \vspace{3mm}
-      \noindent\color{side!60!black}\rule{\linewidth}{0.5pt}
-      \vspace{4mm}
-      \justifying{\color{textDark} #4\par}
-      \vspace{5mm}
-
-      % smaller photo heights for packed page
-      #6
+      \eventinline{#3}{#4}{#6}
 
       \vspace{7mm}
       \noindent\color{side!25}\rule{\linewidth}{0.4pt}
       \vspace{7mm}
 
-      % ----- Event B header/content/photos -----
-      {\sffamily\bfseries\Large\color{textDark} #9\par}
-      \vspace{3mm}
-      \noindent\color{side!60!black}\rule{\linewidth}{0.5pt}
-      \vspace{4mm}
-      \justifying{\color{textDark} #10\par}
-      \vspace{5mm}
-
-      #12
+      \eventinline{#9}{#10}{#12}
 
       \vfill
     \end{minipage}
@@ -281,7 +280,7 @@
 
 % ---------- Cover ----------
 \thispagestyle{empty}
-\setpagequote{“A chronicle of learning is a legacy of values.”}
+\setpagequote{"A chronicle of learning is a legacy of values."}
 \vspace*{10mm}
 \begin{center}
   {\sffamily\bfseries\Huge Krish Chronicles\par}
@@ -299,7 +298,7 @@
 % - Remove third image usage (no \threephotos anywhere)
 
 % Page (Red Run 4 images)
-\setpagequote{❤️ “Education creates awareness; awareness saves lives.”}
+\setpagequote{"Education creates awareness; awareness saves lives."}
 \eventblock
   {5 KM\\Red Run\\Competition}
   {18 July 2025}
@@ -309,7 +308,7 @@
   {\fourphotos{rrc1.jpeg}{rrc2.jpeg}{rrc3.jpeg}{rrc4.jpeg}}
 
 % Page (Debate 4 images)
-\setpagequote{��️ “Debate sharpens the mind and strengthens democracy.”}
+\setpagequote{"Debate sharpens the mind and strengthens democracy."}
 \eventblock
   {Viksith Bharat\\Yuva Connect\\Programme}
   {25.07.2025}
@@ -319,7 +318,7 @@
   {\fourphotos{debate (1).jpeg}{debate (2).jpeg}{debate (3).jpeg}{debate (4).jpeg}}
 
 % Page (District Red Run 4 images)
-\setpagequote{��‍♀️ “Healthy students are the foundation of a healthy society.”}
+\setpagequote{"Healthy students are the foundation of a healthy society."}
 \eventblock
   {District Level\\Red Run\\(5 KM)}
   {30.07.2025}
@@ -329,7 +328,7 @@
   {\fourphotos{run (1).jpeg}{run (2).jpeg}{run (3).jpeg}{run (4).jpeg}}
 
 % Page (Tree 4 images)
-\setpagequote{�� “Green minds create a sustainable future.”}
+\setpagequote{"Green minds create a sustainable future."}
 \eventblock
   {Tree\\Plantation\\Drive}
   {01.08.2025}
@@ -339,12 +338,12 @@
   {\fourphotos{tree (1).jpeg}{tree (2).jpeg}{tree (3).jpeg}{tree (4).jpeg}}
 
 % Page with TWO EVENTS: Independence (1 image) + Orientation (2 images)
-\setpagequote{���� “True independence begins with enlightened minds.”}
-\eventblocktwo
+\setpagequote{"True independence begins with enlightened minds."}
+\eventpair
   {79th\\Independence\\Day} %1
   {14 \& 15 August 2025}    %2
   {79th Independence Day Celebration} %3
-  {Krishnasamy College of Education for Women, Puducherry celebrated the 79th Independence Day on 14th and 15th August 2025 with great patriotism and enthusiasm on the college premises. The celebration was coordinated by Mrs. V. Vasantha. The National Flag was hoisted by Dr. Jeyaseelan, Director, St. Antony’s Matriculation Higher Secondary School, Cuddalore. The programme was presided over by Dr. K. Rajendran, Chairman, Krishnasamy College of Education for Women. The Principal, staff members, and students actively participated in the celebration.
+  {Krishnasamy College of Education for Women, Puducherry celebrated the 79th Independence Day on 14th and 15th August 2025 with great patriotism and enthusiasm on the college premises. The celebration was coordinated by Mrs. V. Vasantha. The National Flag was hoisted by Dr. Jeyaseelan, Director, St. Antony's Matriculation Higher Secondary School, Cuddalore. The programme was presided over by Dr. K. Rajendran, Chairman, Krishnasamy College of Education for Women. The Principal, staff members, and students actively participated in the celebration.
 
 On 16 August 2025, Puducherry Liberation Day was commemorated with pride and reverence. The National Flag was hoisted by Principal Dr.V. Thilagavathy to honour the freedom struggle and the martyrs of Puducherry. Patriotic songs and speeches highlighted the significance of liberation from colonial rule. The programme concluded with a spirit of unity and patriotism.} %4
   {\eventtags{Patriotism}{Flag Hoisting}{National Celebration}} %5
@@ -352,12 +351,12 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {Inaugural\\\& Orientation\\Programme} %7 (unused in layout, kept for consistency)
   {August 2025} %8 (unused)
   {Inaugural and Orientation Programme} %9
-  {The Inaugural and Orientation Programme for the New Batch 2025–2026 was organized at Krishnasamy College of Education for Women during August 2025. The programme was inaugurated by Dr. Kannan in the presence of the Principal, and coordinated by Dr. M. Manjula, Programme Coordinator. Various chief guests, including Mrs. D. Venmathi, Mrs. K. Santhanalakshmi, Dr. K. Balamurugan, Mrs. M. Anandhi, Dr. K. Anandalakshmi, Mrs. M. Sujatha, Dr. B. Pavithra, Mrs. Anila Sunny Roy, and Dr. K. Geetha, delivered enlightening talks on various topics such as the importance of English, role of teachers and students, competitive examinations, success strategies, mental health, programming, mentoring, and national building. The programme provided valuable guidance and motivation to the newly admitted student-teachers.} %10
+  {The Inaugural and Orientation Programme for the New Batch 2025--2026 was organized at Krishnasamy College of Education for Women during August 2025. The programme was inaugurated by Dr. Kannan in the presence of the Principal, and coordinated by Dr. M. Manjula, Programme Coordinator. Various chief guests, including Mrs. D. Venmathi, Mrs. K. Santhanalakshmi, Dr. K. Balamurugan, Mrs. M. Anandhi, Dr. K. Anandalakshmi, Mrs. M. Sujatha, Dr. B. Pavithra, Mrs. Anila Sunny Roy, and Dr. K. Geetha, delivered enlightening talks on various topics such as the importance of English, role of teachers and students, competitive examinations, success strategies, mental health, programming, mentoring, and national building. The programme provided valuable guidance and motivation to the newly admitted student-teachers.} %10
   {\eventtags{Student Induction}{Guidance}{B.Ed. Programme}} %11 (not shown in this layout; sidebar is for event A only)
   {\twophotoscompact{orientation (1).jpeg}{orientation (2).jpeg}} %12
 
 % Invitations (keep single pages, no borders, rounded corners already)
-\setpagequote{�� “The first step in learning is confidence.”}
+\setpagequote{"The first step in learning is confidence."}
 \eventblock
   {Orientation\\Invitations}
   {2025--2026}
@@ -366,7 +365,7 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\eventtags{Invitations}{Orientation}{Posters}}
   {\postersfour{oe (1).jpeg}{oe (2).jpeg}{oe (3).jpeg}{oe (4).jpeg}}
 
-\setpagequote{�� “Education is not preparation for life; it is life itself.”}
+\setpagequote{"Education is not preparation for life; it is life itself."}
 \eventblock
   {Orientation\\Invitations}
   {2025--2026}
@@ -375,7 +374,7 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\eventtags{Invitations}{Orientation}{Posters}}
   {\postersfour{oe (5).jpeg}{oe (6).jpeg}{oe (7).jpeg}{oe (8).jpeg}}
 
-\setpagequote{��‍�� “A good teacher plants seeds of lifelong learning.”}
+\setpagequote{"A good teacher plants seeds of lifelong learning."}
 \eventblock
   {Orientation\\Invitations}
   {2025--2026}
@@ -385,12 +384,12 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\postersfour{oe (9).jpeg}{te (1).jpeg}{te (2).jpeg}{te (3).jpeg}}
 
 % Page with TWO EVENTS: Teachers' Day (1) + Suicide Prevention (1)
-\setpagequote{��‍�� “Teachers shape minds that shape the nation.”}
-\eventblocktwo
+\setpagequote{"Teachers shape minds that shape the nation."}
+\eventpair
   {Teachers'\\Day}
   {04.09.2025}
-  {Teachers’ Day Celebration}
-  {Teachers’ Day was celebrated with great enthusiasm to honour and appreciate the invaluable contributions of teachers. The programme included cultural events, competitions, and academic activities that highlighted the role of teachers in shaping students’ knowledge and character. A debate and quiz were organised focusing on teaching, learning, and the impact of technology in education. Faculty members and students actively participated, making the celebration meaningful and vibrant. The event fostered respect, gratitude, and a strong teacher–student bond.}
+  {Teachers' Day Celebration}
+  {Teachers' Day was celebrated with great enthusiasm to honour and appreciate the invaluable contributions of teachers. The programme included cultural events, competitions, and academic activities that highlighted the role of teachers in shaping students' knowledge and character. A debate and quiz were organised focusing on teaching, learning, and the impact of technology in education. Faculty members and students actively participated, making the celebration meaningful and vibrant. The event fostered respect, gratitude, and a strong teacher-student bond.}
   {\eventtags{Teacher Appreciation}{Cultural Events}{Student Engagement}}
   {\onephotocompact{teachers_day (1).jpeg}}
   {Suicide\\Prevention\\Awareness}
@@ -401,7 +400,7 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\onephotocompact{suicide (1).jpeg}}
 
 % Student Council Election (4 images single page)
-\setpagequote{��️ “Education nurtures leadership and democratic values.”}
+\setpagequote{"Education nurtures leadership and democratic values."}
 \eventblock
   {Student\\Council\\Election}
   {13 September 2025}
@@ -411,12 +410,12 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\fourphotos{election (1).jpeg}{election (2).jpeg}{election (3).jpeg}{election (4).jpeg}}
 
 % Page with TWO EVENTS: Ayurveda (2 images) + Vigilance (2 images)
-\setpagequote{⚖️ “Education builds integrity and ethical citizenship.”}
-\eventblocktwo
+\setpagequote{"Education builds integrity and ethical citizenship."}
+\eventpair
   {Ayurveda\\Day}
   {13.10.2025}
   {Ayurveda Day Celebration}
-  {Krishnasamy College of Education for Women, Puducherry celebrated the 10th Ayurveda Day on 13 October 2025 at the Multi-Purpose Hall. The programme was organized on the theme “Ayurveda for People and Planet.” Dr. R. Sivatharani, BSMS, PGDCR, Sri Dhavamani Siddha Clinic, Cuddalore, was the Chief Guest and addressed the gathering. The programme was coordinated by Dr. M. Parimala and Mrs. N. Lakshmi under the guidance of the Principal. Faculty members and student-teachers actively participated, making the programme informative and meaningful.}
+  {Krishnasamy College of Education for Women, Puducherry celebrated the 10th Ayurveda Day on 13 October 2025 at the Multi-Purpose Hall. The programme was organized on the theme "Ayurveda for People and Planet." Dr. R. Sivatharani, BSMS, PGDCR, Sri Dhavamani Siddha Clinic, Cuddalore, was the Chief Guest and addressed the gathering. The programme was coordinated by Dr. M. Parimala and Mrs. N. Lakshmi under the guidance of the Principal. Faculty members and student-teachers actively participated, making the programme informative and meaningful.}
   {\eventtags{Traditional Medicine}{Health Awareness}{People \& Planet}}
   {\twophotoscompact{ayur (1).jpeg}{ayur (2).jpeg}}
   {Vigilance\\Awareness\\Week}
@@ -427,8 +426,8 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\twophotoscompact{vigil (1).jpeg}{vigil (2).jpeg}}
 
 % Tobacco (remove 3rd image -> keep 2 only) + Community Camp (remove 3rd image -> keep 2 only) in one page
-\setpagequote{�� “Education empowers youth to choose health over habits.”}
-\eventblocktwo
+\setpagequote{"Education empowers youth to choose health over habits."}
+\eventpair
   {Tobacco-Free\\Youth\\Campaign}
   {03.11.2025}
   {Tobacco-Free Youth Campaign}
@@ -443,8 +442,8 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\twophotoscompact{cc (1).jpeg}{cc (2).jpeg}}
 
 % Page with TWO EVENTS: National Education Day (1) + Navarathri (2)
-\setpagequote{�� “Learning extends beyond classrooms into communities.”}
-\eventblocktwo
+\setpagequote{"Learning extends beyond classrooms into communities."}
+\eventpair
   {National\\Education\\Day}
   {11 November 2025}
   {National Education Day}
@@ -459,8 +458,8 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\twophotoscompact{navaratri (1).jpeg}{navaratri (2).jpeg}}
 
 % Page with TWO EVENTS: AIDS Awareness Day (2) + Constitution Day (1)
-\setpagequote{�� “Education helps us understand our rights and duties.”}
-\eventblocktwo
+\setpagequote{"Education helps us understand our rights and duties."}
+\eventpair
   {AIDS\\Awareness\\Day}
   {01.12.2025}
   {Aids Awareness Day}
@@ -475,7 +474,7 @@ On 16 August 2025, Puducherry Liberation Day was commemorated with pride and rev
   {\onephotocompact{constitution.jpeg}}
 
 % Christmas & New Year (1 image) single page (kept solo to finish clean)
-\setpagequote{✨ “Education spreads hope, unity, and goodwill.”}
+\setpagequote{"Education spreads hope, unity, and goodwill."}
 \eventblock
   {Christmas\\\& New Year\\Celebration}
   {23 December 2025}
